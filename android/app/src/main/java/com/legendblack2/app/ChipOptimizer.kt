@@ -154,6 +154,8 @@ object ChipOptimizer {
                     if (best60HzMode != null) {
                         val params: WindowManager.LayoutParams = activity.window.attributes
                         params.preferredDisplayModeId = best60HzMode.modeId
+                        @Suppress("DEPRECATION")
+                        params.preferredRefreshRate = best60HzMode.refreshRate
                         activity.window.attributes = params
                     }
                 }
@@ -165,11 +167,26 @@ object ChipOptimizer {
                 } else {
                     Surface.FRAME_RATE_COMPATIBILITY_DEFAULT
                 }
-                activity.window.decorView.post {
-                    try {
-                        activity.window.decorView.holder?.surface?.setFrameRate(60.0f, compat)
-                    } catch (_: Exception) {
+                // Bind frame rate hint onto a transparent 1px SurfaceView holder when available
+                val rootGroup = activity.window.decorView as? android.view.ViewGroup
+                if (rootGroup != null && rootGroup.findViewWithTag<android.view.SurfaceView>("fps_lock_sv") == null) {
+                    val sv = android.view.SurfaceView(activity).apply {
+                        tag = "fps_lock_sv"
+                        setWillNotDraw(true)
+                        holder.setFormat(android.graphics.PixelFormat.TRANSPARENT)
+                        layoutParams = android.view.ViewGroup.LayoutParams(1, 1)
                     }
+                    sv.holder.addCallback(object : android.view.SurfaceHolder.Callback {
+                        override fun surfaceCreated(holder: android.view.SurfaceHolder) {
+                            try {
+                                holder.surface.setFrameRate(60.0f, compat)
+                            } catch (_: Exception) {
+                            }
+                        }
+                        override fun surfaceChanged(holder: android.view.SurfaceHolder, f: Int, w: Int, h: Int) {}
+                        override fun surfaceDestroyed(holder: android.view.SurfaceHolder) {}
+                    })
+                    rootGroup.addView(sv, 0)
                 }
             }
         } catch (e: Exception) {
