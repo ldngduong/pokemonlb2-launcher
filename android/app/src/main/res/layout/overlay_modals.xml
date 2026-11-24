@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/modalBackdrop"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#CC05080F"
+    android:clickable="true"
+    android:focusable="true"
+    android:visibility="gone">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <FrameLayout
+            android:id="@+id/modalContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="28dp">
+
+            <!-- 1. MISSING ROM MODAL ("CHƯA CÓ GAME") -->
+            <LinearLayout
+                android:id="@+id/cardMissingRom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_modal_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:visibility="gone">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fz_univers_bold"
+                        android:gravity="center"
+                        android:paddingHorizontal="28dp"
+                        android:text="CHƯA CÓ GAME"
+                        android:textColor="@color/accent_red"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/btnMissingCloseX"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:gravity="center"
+                        android:text="✕"
+                        android:textColor="@color/text_slate"
+                        android:textSize="18sp" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:fontFamily="@font/fz_univers"
+                    android:gravity="center"
+                    android:lineSpacingExtra="3dp"
+                    android:text="Vui lòng tải game trực tiếp từ server hoặc tải rom về thư mục game"
+                    android:textColor="@color/text_slate"
+                    android:textSize="12.5sp" />
+
+                <Button
+                    android:id="@+id/btnMissingDownload"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_pill_white"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="TẢI GAME TỪ SERVER"
+                    android:textAllCaps="false"
+                    android:textColor="#000000"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnMissingPickFile"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_pill_dark"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="CHỌN FILE ROM CÓ SẴN (.NDS)"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_white"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnMissingOpenFolder"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_pill_dark"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="MỞ THƯ MỤC GAME"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_white"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnMissingClose"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_pill_muted"
+                    android:fontFamily="@font/fz_univers"
+                    android:stateListAnimator="@null"
+                    android:text="ĐÓNG"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_slate"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- 2. SETTINGS MODAL ("CÀI ĐẶT & QUẢN LÝ") -->
+            <LinearLayout
+                android:id="@+id/cardSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_modal_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="22dp"
+                android:visibility="gone">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fz_univers_bold"
+                        android:paddingEnd="36dp"
+                        android:text="CÀI ĐẶT &amp; QUẢN LÝ"
+                        android:textColor="@color/text_white"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/btnSettingsCloseX"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:gravity="center"
+                        android:text="✕"
+                        android:textColor="@color/text_slate"
+                        android:textSize="18sp" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvSettingsSubtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/fz_univers"
+                    android:text="Phiên bản: Chưa có ROM • Save: Chưa có file save trong thư mục Game"
+                    android:textColor="@color/text_slate"
+                    android:textSize="12sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="14dp"
+                    android:background="@color/border_card" />
+
+                <Button
+                    android:id="@+id/btnSetOpenFolder"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:background="@drawable/bg_pill_dark"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="MỞ THƯ MỤC GAME"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_white"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnSetSyncSave"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_pill_dark"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="QUÉT &amp; CHUẨN HÓA SAVE"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_white"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnSetPickSave"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_pill_dark"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="NHẬP FILE SAVE (.SAV / .DSV)"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_white"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnSetChipProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_pill_dark"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="TỐI ƯU CHIP &amp; GIẢ LẬP"
+                    android:textAllCaps="false"
+                    android:textColor="@color/accent_cyan"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnSetRedownload"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_pill_white"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="TẢI LẠI TỪ SERVER"
+                    android:textAllCaps="false"
+                    android:textColor="#000000"
+                    android:textSize="13sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="14dp"
+                    android:background="@color/border_card" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:text="MÁY CHỦ CẬP NHẬT:"
+                    android:textColor="@color/text_slate"
+                    android:textSize="11sp" />
+
+                <Button
+                    android:id="@+id/btnSetOpenServer"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_pill_dark"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="MỞ SERVER"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/fz_univers"
+                    android:text="Lưu ý: Chép file save (.sav) cũ vào thư mục rom/ hoặc chọn Nhập Save rồi bấm [Quét &amp; Chuẩn Hóa Save]."
+                    android:textColor="@color/text_muted"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- 3. DOWNLOAD PROGRESS MODAL -->
+            <LinearLayout
+                android:id="@+id/cardDownload"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_modal_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvDlTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:gravity="center"
+                    android:text="ĐANG TẢI ROM..."
+                    android:textColor="@color/accent_cyan"
+                    android:textSize="19sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/fz_univers"
+                    android:gravity="center"
+                    android:text="Nguồn: Máy chủ cập nhật (Tốc độ cao)"
+                    android:textColor="@color/text_slate"
+                    android:textSize="12sp" />
+
+                <ProgressBar
+                    android:id="@+id/pbDownload"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="14dp"
+                    android:layout_marginTop="20dp"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/bg_progress_bar" />
+
+                <TextView
+                    android:id="@+id/tvDlStats"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/fz_univers"
+                    android:gravity="center"
+                    android:text="Đang kết nối đến máy chủ cập nhật..."
+                    android:textColor="#CBD5E1"
+                    android:textSize="11.5sp" />
+
+                <Button
+                    android:id="@+id/btnDlCancel"
+                    android:layout_width="150dp"
+                    android:layout_height="38dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/bg_pill_red"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="HỦY BỎ"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_white"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- 4. CHIP OPTIMIZATION & EMULATOR MODAL -->
+            <LinearLayout
+                android:id="@+id/cardChipProfile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_modal_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="22dp"
+                android:visibility="gone">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fz_univers_bold"
+                        android:paddingEnd="36dp"
+                        android:text="TỐI ƯU PHẦN CỨNG"
+                        android:textColor="@color/accent_cyan"
+                        android:textSize="19sp" />
+
+                    <TextView
+                        android:id="@+id/btnChipCloseX"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:gravity="center"
+                        android:text="✕"
+                        android:textColor="@color/text_slate"
+                        android:textSize="18sp" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvChipInfoDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/fz_univers"
+                    android:lineSpacingExtra="3dp"
+                    android:text="Thiết bị: Đang nhận diện..."
+                    android:textColor="#CBD5E1"
+                    android:textSize="12sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@color/border_card" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:text="CHỌN PROFILE TỐI ƯU:"
+                    android:textColor="@color/text_slate"
+                    android:textSize="11sp" />
+
+                <Button
+                    android:id="@+id/btnProfileAuto"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_pill_dark"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="TỰ ĐỘNG THEO CHIP"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_white"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btnProfileDimensity"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_pill_dark"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="MEDIATEK / DIMENSITY (KHÓA 60HZ)"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_white"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btnProfileSnapdragon"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_pill_dark"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="SNAPDRAGON (CHỐNG CRASH ADRENO)"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_white"
+                    android:textSize="12sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@color/border_card" />
+
+                <TextView
+                    android:id="@+id/tvChipMelondsTips"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fz_univers"
+                    android:lineSpacingExtra="3dp"
+                    android:text="Khuyến nghị trong cài đặt Video của melonDS:"
+                    android:textColor="@color/text_slate"
+                    android:textSize="11.5sp" />
+
+                <Button
+                    android:id="@+id/btnChipClose"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_pill_white"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="XÁC NHẬN &amp; ĐÓNG"
+                    android:textAllCaps="false"
+                    android:textColor="#000000"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- 5. GENERIC DARK GLASS DIALOG (UPDATE CONFIRM / ALERTS) -->
+            <LinearLayout
+                android:id="@+id/cardConfirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_modal_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="22dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvConfirmTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:text="THÔNG BÁO"
+                    android:textColor="@color/text_white"
+                    android:textSize="19sp" />
+
+                <TextView
+                    android:id="@+id/tvConfirmBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/fz_univers"
+                    android:lineSpacingExtra="4dp"
+                    android:textColor="#CBD5E1"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnConfirmPrimary"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/bg_pill_white"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="ĐỒNG Ý"
+                    android:textAllCaps="false"
+                    android:textColor="#000000"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnConfirmSecondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_pill_muted"
+                    android:fontFamily="@font/fz_univers"
+                    android:stateListAnimator="@null"
+                    android:text="ĐÓNG"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_slate"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+        </FrameLayout>
+    </ScrollView>
+</FrameLayout>
