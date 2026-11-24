@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+build/
+dist/
+*.spec.bak
+*.exe
+*.zip
+*.nds
+*.sav
+*.dsv
+rom/
+backups/
+emulator/
+.vscode/
+.idea/
