@@ -216,6 +216,19 @@
                     android:textSize="13sp" />
 
                 <Button
+                    android:id="@+id/btnSetExportSave"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_pill_dark"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="XUẤT FILE SAVE (.SAV)"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_white"
+                    android:textSize="13sp" />
+
+                <Button
                     android:id="@+id/btnSetChipProfile"
                     android:layout_width="match_parent"
                     android:layout_height="42dp"
@@ -223,9 +236,22 @@
                     android:background="@drawable/bg_pill_dark"
                     android:fontFamily="@font/fz_univers_bold"
                     android:stateListAnimator="@null"
-                    android:text="TỐI ƯU CHIP &amp; GIẢ LẬP"
+                    android:text="TỐI ƯU CHIP &amp; NHÂN GIẢ LẬP"
                     android:textAllCaps="false"
                     android:textColor="@color/accent_cyan"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnSetEmulatorSettings"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_pill_dark"
+                    android:fontFamily="@font/fz_univers_bold"
+                    android:stateListAnimator="@null"
+                    android:text="CÀI ĐẶT GIẢ LẬP (PHÍM ẢO / WFC)"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_white"
                     android:textSize="13sp" />
 
                 <Button
@@ -273,7 +299,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:fontFamily="@font/fz_univers"
-                    android:text="Lưu ý: Chép file save (.sav) cũ vào thư mục rom/ hoặc chọn Nhập Save rồi bấm [Quét &amp; Chuẩn Hóa Save]."
+                    android:text="Lưu ý: Dùng [Nhập File Save] hoặc [Xuất File Save] để chuyển tiến trình mượt mà giữa PC và Android."
                     android:textColor="@color/text_muted"
                     android:textSize="11sp" />
             </LinearLayout>
