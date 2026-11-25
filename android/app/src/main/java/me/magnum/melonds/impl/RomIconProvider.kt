@@ -10,6 +10,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import me.magnum.melonds.common.romprocessors.RomFileProcessorFactory
 import me.magnum.melonds.domain.model.rom.Rom
+import me.magnum.melonds.extensions.toSingleDocumentFile
 import java.io.File
 import java.util.Collections
 
@@ -72,7 +73,7 @@ class RomIconProvider(private val context: Context, private val romFileProcessor
             }
         }
 
-        val romDocument = DocumentFile.fromSingleUri(context, rom.uri) ?: return@withContext null
+        val romDocument = rom.uri.toSingleDocumentFile(context) ?: return@withContext null
         val romProcessor = romFileProcessorFactory.getFileRomProcessorForDocument(romDocument) ?: return@withContext null
         val bitmap = romProcessor.getRomIcon(rom)
         if (bitmap != null && iconCacheDir != null) {

@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import me.magnum.melonds.common.romprocessors.RomFileProcessor
 import me.magnum.melonds.common.romprocessors.RomFileProcessorFactory
+import me.magnum.melonds.extensions.toSingleDocumentFile
 
 abstract class BaseRomFileProcessorFactory(private val context: Context) : RomFileProcessorFactory {
     /**
@@ -25,7 +26,7 @@ abstract class BaseRomFileProcessorFactory(private val context: Context) : RomFi
     }
 
     override fun getFileRomProcessorForDocument(romUri: Uri): RomFileProcessor? {
-        val romDocument = DocumentFile.fromSingleUri(context, romUri) ?: return null
+        val romDocument = romUri.toSingleDocumentFile(context) ?: return null
         return getFileRomProcessorForDocument(romDocument)
     }
 }

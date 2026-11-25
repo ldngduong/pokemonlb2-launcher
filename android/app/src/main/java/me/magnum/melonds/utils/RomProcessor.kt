@@ -31,7 +31,7 @@ object RomProcessor {
 		val romStreamProcessor = RomStreamDataProcessor().apply {
 			registerSequentialProcessor(0x0) {
 				val header = ByteArray(0x160)
-				if (stream.read(header) != 0x160) fail()
+				if (!readExact(stream, header)) fail()
 				save(KEY_HEADER, header)
 
 				val gameCode = String(header, 0x0C, 4)
@@ -48,19 +48,19 @@ object RomProcessor {
 
 				registerValueProcessor(arm9Offset.toLong()) {
 					val arm9BootCode = ByteArray(arm9Size)
-					if (stream.read(arm9BootCode) != arm9Size) fail()
+					if (!readExact(stream, arm9BootCode)) fail()
 					save(KEY_ARM9_BOOTCODE, arm9BootCode)
 				}
 
 				registerValueProcessor(arm7Offset.toLong()) {
 					val arm7BootCode = ByteArray(arm7Size)
-					if (stream.read(arm7BootCode) != arm7Size) fail()
+					if (!readExact(stream, arm7BootCode)) fail()
 					save(KEY_ARM7_BOOTCODE, arm7BootCode)
 				}
 
 				registerValueProcessor(bannerOffset.toLong()) {
 					val banner = ByteArray(0xA00)
-					stream.read(banner)
+					readExact(stream, banner)
 					save(KEY_BANNER, banner)
 
 					val titleData = banner.copyOfRange(0x340, 0x340 + 256)
@@ -243,6 +243,19 @@ object RomProcessor {
 	private fun getRawColor(color: UShort, offset: Int): Byte {
 		// Fetch 5 bits at the given offset
 		return (color.toInt().shr(offset) and 0x1F).toByte()
+	}
+
+	/**
+	 * Reads until [buffer] is full or EOF is reached, guarding against partial reads.
+	 */
+	private fun readExact(stream: InputStream, buffer: ByteArray): Boolean {
+		var offset = 0
+		while (offset < buffer.size) {
+			val read = stream.read(buffer, offset, buffer.size - offset)
+			if (read <= 0) return false
+			offset += read
+		}
+		return true
 	}
 
 	/**

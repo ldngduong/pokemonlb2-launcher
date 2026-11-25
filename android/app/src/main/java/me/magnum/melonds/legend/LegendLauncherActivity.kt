@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.documentfile.provider.DocumentFile
 import dagger.hilt.android.AndroidEntryPoint
 import me.magnum.melonds.R
 import me.magnum.melonds.common.romprocessors.RomFileProcessorFactory
@@ -704,15 +705,17 @@ class LegendLauncherActivity : AppCompatActivity() {
         ChipOptimizer.applyCoreOptimizations(this)
         backupActiveSaveSilent()
 
-        val romUri = Uri.fromFile(romFile)
-        val parentUri = Uri.fromFile(romDir)
-        val processor = romFileProcessorFactory.getFileRomProcessorForDocument(romUri)
+        val romDoc = DocumentFile.fromFile(romFile)
+        val romUri = romDoc.uri
+        val parentUri = DocumentFile.fromFile(romDir).uri
+        val processor = romFileProcessorFactory.getFileRomProcessorForDocument(romDoc)
         val rom = processor?.getRomFromUri(romUri, parentUri)
 
         if (rom == null) {
+            val sizeMb = String.format(Locale.US, "%.1f MB", romFile.length() / (1024.0 * 1024.0))
             showDarkDialog(
                 title = "LỖI ĐỌC FILE ROM",
-                body = "Không thể đọc thông tin ROM (${romFile.name}). File ROM có thể bị lỗi tải dở — vui lòng tải lại từ server.",
+                body = "Không thể đọc thông tin ROM (${romFile.name} • $sizeMb).\nFile ROM có thể bị hỏng hoặc tải chưa đủ dung lượng — vui lòng tải lại từ server.",
                 primaryText = "TẢI LẠI TỪ SERVER",
                 secondaryText = "ĐÓNG",
                 titleColorHex = "#EF4444"

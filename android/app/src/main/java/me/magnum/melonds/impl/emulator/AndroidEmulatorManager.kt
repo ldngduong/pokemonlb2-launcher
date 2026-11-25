@@ -28,6 +28,7 @@ import me.magnum.melonds.domain.model.rom.config.RuntimeConsoleType
 import me.magnum.melonds.domain.model.rom.config.RuntimeEnum
 import me.magnum.melonds.domain.repositories.SettingsRepository
 import me.magnum.melonds.domain.services.EmulatorManager
+import me.magnum.melonds.extensions.toSingleDocumentFile
 import me.magnum.melonds.impl.camera.DSiCameraSourceMultiplexer
 import me.magnum.melonds.ui.emulator.rewind.model.RewindSaveState
 import me.magnum.melonds.ui.emulator.rewind.model.RewindWindow
@@ -86,7 +87,7 @@ class AndroidEmulatorManager(
 
     override suspend fun loadRom(rom: Rom, cheats: List<Cheat>): RomLaunchResult {
         return withContext(Dispatchers.IO) {
-            val fileRomDocument = DocumentFile.fromSingleUri(context, rom.uri) ?: return@withContext RomLaunchResult.LaunchFailedRomNotFound
+            val fileRomDocument = rom.uri.toSingleDocumentFile(context) ?: return@withContext RomLaunchResult.LaunchFailedRomNotFound
             val fileRomProcessor = romFileProcessorFactory.getFileRomProcessorForDocument(fileRomDocument)
             val romUri = fileRomProcessor?.getRealRomUri(rom) ?: return@withContext RomLaunchResult.LaunchFailedRomNotSupported
 
