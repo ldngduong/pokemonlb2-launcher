@@ -161,6 +161,8 @@ class LegendLauncherActivity : AppCompatActivity() {
             if (uri != null) exportSaveToUri(uri)
         }
 
+    private val launcherUpdates = LauncherUpdates(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -348,7 +350,16 @@ class LegendLauncherActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         btnPlay.setOnClickListener { onClickPlay() }
-        btnUpdate.setOnClickListener { checkAndUpdate() }
+        btnUpdate.setOnClickListener {
+            if (!isDownloadActive) {
+                androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Cập nhật")
+                    .setItems(arrayOf("ROM", "Launcher")) { _, which ->
+                        if (which == 0) checkAndUpdate() else launcherUpdates.check()
+                    }
+                    .show()
+            }
+        }
         btnSettings.setOnClickListener { showSettingsOverlay() }
         tvChipHeaderBadge.setOnClickListener { showChipProfileOverlay() }
 

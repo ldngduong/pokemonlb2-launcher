@@ -74,7 +74,7 @@ android {
         create("gitHub") {
             dimension = "version"
             isDefault = true
-            versionNameSuffix = " GH"
+            versionName = "1.0.1"
             ndk {
                 // Add 32 bit support only on GitHub releases
                 abiFilters.add("armeabi-v7a")

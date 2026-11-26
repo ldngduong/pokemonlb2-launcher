@@ -146,7 +146,7 @@ object ReleaseClient {
         }
     }
 
-    private fun openWithRedirects(
+    internal fun openWithRedirects(
         initialUrl: String,
         timeoutMs: Int,
         extraHeaders: Map<String, String> = emptyMap()
@@ -154,6 +154,7 @@ object ReleaseClient {
         var currentUrl = initialUrl
         var redirects = 0
         while (redirects < 8) {
+            require(URL(currentUrl).protocol == "https") { "Cần kết nối HTTPS." }
             val conn = (URL(currentUrl).openConnection() as HttpURLConnection).apply {
                 connectTimeout = timeoutMs
                 readTimeout = timeoutMs

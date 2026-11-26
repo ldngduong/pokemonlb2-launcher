@@ -57,6 +57,21 @@ jobs:
           cp "$APK_PATH" PokemonLegendBlack2-Android.apk
           ls -lh PokemonLegendBlack2-Android.apk
 
+      - name: Verify APK upgrades the public launcher
+        run: |
+          curl -fsSL https://github.com/ldngduong/pokemonlb2-launcher/releases/download/v1.0.0/PokemonLegendBlack2-Android.apk -o old.apk
+          apksigner=$(find "$ANDROID_HOME/build-tools" -name apksigner | sort -V | tail -n 1)
+          aapt=$(dirname "$apksigner")/aapt
+          old_cert=$("$apksigner" verify --print-certs old.apk | grep -F 'certificate SHA-256 digest:')
+          new_cert=$("$apksigner" verify --print-certs PokemonLegendBlack2-Android.apk | grep -F 'certificate SHA-256 digest:')
+          test "$old_cert" = "$new_cert"
+          old_pkg=$("$aapt" dump badging old.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p")
+          new_pkg=$("$aapt" dump badging PokemonLegendBlack2-Android.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p")
+          test "$old_pkg" = com.legendblack2.app && test "$old_pkg" = "$new_pkg"
+          old_version=$("$aapt" dump badging old.apk | sed -n "s/^package: .*versionCode='\([0-9]*\)'.*/\1/p")
+          new_version=$("$aapt" dump badging PokemonLegendBlack2-Android.apk | sed -n "s/^package: .*versionCode='\([0-9]*\)'.*/\1/p")
+          test "$new_version" -gt "$old_version"
+
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
