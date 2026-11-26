@@ -3,6 +3,7 @@ import urllib.request, urllib.error, urllib.parse
 import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageDraw, ImageFont, ImageTk
+from launcher_updates import APP_VERSION, connection_error, download_update, latest_update, mark_started, open_https, start_replacement
 
 APP_TITLE = "Pokémon Legend Black 2"
 
@@ -376,7 +377,7 @@ class LauncherGUI:
         self.item_update = self.canvas.create_image(self.btn_update_pos[0], self.btn_update_pos[1], anchor="nw", image=self.img_update_normal, tags="btn_update")
         self.canvas.tag_bind("btn_update", "<Enter>", lambda e: (self.canvas.config(cursor="hand2"), self.canvas.itemconfig(self.item_update, image=self.img_update_hover)))
         self.canvas.tag_bind("btn_update", "<Leave>", lambda e: (self.canvas.config(cursor=""), self.canvas.itemconfig(self.item_update, image=self.img_update_normal)))
-        self.canvas.tag_bind("btn_update", "<Button-1>", lambda e: self.check_and_update())
+        self.canvas.tag_bind("btn_update", "<Button-1>", self.show_update_menu)
 
         # Button 3: CÀI ĐẶT
         w3, h3 = 125, 42
@@ -813,6 +814,96 @@ class LauncherGUI:
     def show_download_overlay(self):
         self.trigger_full_download()
 
+    def show_update_menu(self, event):
+        if self.is_overlay_open or getattr(self, "launcher_update_active", False):
+            return
+        menu = tk.Menu(self.root, tearoff=False)
+        menu.add_command(label="Cập nhật ROM", command=self.check_and_update)
+        menu.add_command(label=f"Cập nhật Launcher ({APP_VERSION})", command=self.check_launcher_update)
+        try:
+            menu.tk_popup(event.x_root, event.y_root)
+        finally:
+            menu.grab_release()
+
+    def check_launcher_update(self):
+        if not getattr(sys, "frozen", False):
+            messagebox.showinfo("Cập nhật Launcher", "Hãy mở launcher từ bản Windows đã đóng gói.")
+            return
+        if self.is_game_running():
+            messagebox.showwarning("Trò chơi đang chạy", "Lưu trong game và đóng giả lập trước khi cập nhật launcher.")
+            return
+        self.launcher_update_active = True
+        self.canvas.itemconfig(self.status_item, text="Đang kiểm tra bản cập nhật launcher…", fill="#FBBF24")
+
+        def finish_check(update, error):
+            self.launcher_update_active = False
+            self.refresh_all_status()
+            if error:
+                messagebox.showerror("Không thể cập nhật launcher", connection_error(error))
+            elif update is None:
+                messagebox.showinfo("Cập nhật Launcher", "Launcher đã ở phiên bản mới nhất.")
+            elif messagebox.askyesno("Cập nhật Launcher", f"Tải launcher {update[0]} và mở lại sau khi cập nhật?"):
+                self.download_launcher_update(update)
+
+        def worker():
+            try:
+                update = latest_update(APP_USER_AGENT)
+            except Exception as error:
+                self.root.after(0, finish_check, None, error)
+            else:
+                self.root.after(0, finish_check, update, None)
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def download_launcher_update(self, update):
+        from pathlib import Path
+        from tkinter import ttk
+
+        executable = Path(sys.executable).resolve()
+        self.launcher_update_active = True
+        cancelled = threading.Event()
+        dialog = tk.Toplevel(self.root)
+        dialog.title(f"Đang tải launcher {update[0]}")
+        dialog.transient(self.root)
+        dialog.protocol("WM_DELETE_WINDOW", cancelled.set)
+        bar = ttk.Progressbar(dialog, length=280, maximum=100)
+        bar.pack(padx=22, pady=(20, 12))
+        ttk.Button(dialog, text="Hủy", command=cancelled.set).pack(pady=(0, 15))
+        dialog.grab_set()
+
+        def finish(candidate, error):
+            dialog.destroy()
+            self.launcher_update_active = False
+            if candidate and not cancelled.is_set() and not self.is_game_running():
+                try:
+                    start_replacement(candidate, executable, update[3],
+                                      Path(sys._MEIPASS) / "launcher_replace.ps1")
+                except OSError as failure:
+                    error = failure
+                else:
+                    self.root.destroy()
+                    return
+            elif candidate and not cancelled.is_set():
+                error = RuntimeError("Lưu trong game và đóng giả lập trước khi cập nhật launcher.")
+            if candidate:
+                candidate.unlink(missing_ok=True)
+                candidate.parent.rmdir()
+            if error and not cancelled.is_set():
+                messagebox.showerror("Không thể cập nhật launcher", connection_error(error))
+
+        def progress(percent):
+            self.root.after(0, bar.config, {"value": percent})
+
+        def worker():
+            try:
+                candidate = download_update(update, executable, APP_USER_AGENT, progress, cancelled)
+            except Exception as error:
+                self.root.after(0, finish, None, error)
+            else:
+                self.root.after(0, finish, candidate, None)
+
+        threading.Thread(target=worker, daemon=True).start()
+
     def trigger_full_download(self):
         self.close_overlay()
         if self.is_game_running():
@@ -830,7 +921,7 @@ class LauncherGUI:
                 "User-Agent": APP_USER_AGENT,
                 "Accept": "application/vnd.github.v3+json"
             })
-            with urllib.request.urlopen(req, timeout=10) as resp:
+            with open_https(req, timeout=10) as resp:
                 remote_data = json.loads(resp.read().decode("utf-8"))
 
             tag_name = remote_data.get("tag_name", "")
@@ -851,7 +942,7 @@ class LauncherGUI:
                 file_size=nds_asset.get("size", 362560104)
             )
         except Exception as e:
-            messagebox.showerror("Lỗi kết nối", f"Không thể lấy thông tin tải từ máy chủ:\n{e}")
+            messagebox.showerror("Lỗi kết nối", f"Không thể lấy thông tin tải từ máy chủ:\n{connection_error(e)}")
             self.refresh_all_status()
 
     def start_unified_download(self, download_url, remote_version, file_size):
@@ -922,7 +1013,7 @@ class LauncherGUI:
                 req = urllib.request.Request(download_url, headers={"User-Agent": APP_USER_AGENT})
                 start_time = time.time()
 
-                with urllib.request.urlopen(req, timeout=25) as resp:
+                with open_https(req, timeout=25) as resp:
                     total_size = int(resp.headers.get("Content-Length", file_size or 362560104))
                     downloaded = 0
                     chunk_size = 256 * 1024
@@ -1034,10 +1125,10 @@ class LauncherGUI:
                 "User-Agent": APP_USER_AGENT,
                 "Accept": "application/vnd.github.v3+json"
             })
-            with urllib.request.urlopen(req, timeout=8) as resp:
+            with open_https(req, timeout=8) as resp:
                 remote_data = json.loads(resp.read().decode("utf-8"))
         except Exception as e:
-            messagebox.showerror("Lỗi kết nối", f"Không thể kết nối đến máy chủ cập nhật:\n{e}")
+            messagebox.showerror("Lỗi kết nối", f"Không thể kết nối đến máy chủ cập nhật:\n{connection_error(e)}")
             self.refresh_all_status()
             return
 
@@ -1095,7 +1186,7 @@ class LauncherGUI:
                     "User-Agent": APP_USER_AGENT,
                     "Accept": "application/vnd.github.v3+json"
                 })
-                with urllib.request.urlopen(req, timeout=6) as resp:
+                with open_https(req, timeout=6) as resp:
                     remote_data = json.loads(resp.read().decode("utf-8"))
 
                 tag_name = remote_data.get("tag_name", "")
@@ -1113,7 +1204,7 @@ class LauncherGUI:
                 # Nếu có bản mới khác với bản đang chơi
                 if remote_v and current_v and remote_v != current_v:
                     def notify_user():
-                        if self.is_overlay_open or self.is_game_running():
+                        if self.is_overlay_open or getattr(self, "launcher_update_active", False) or self.is_game_running():
                             return
 
                         body = remote_data.get("body", "")
@@ -1143,6 +1234,10 @@ class LauncherGUI:
         threading.Thread(target=bg_check, daemon=True).start()
 
 if __name__ == "__main__":
+    from pathlib import Path
+
     root = tk.Tk()
     app = LauncherGUI(root)
+    if getattr(sys, "frozen", False):
+        root.after_idle(mark_started, Path(sys.executable).resolve())
     root.mainloop()

@@ -1,11 +1,11 @@
 # -*- mode: python ; coding: utf-8 -*-
-
+from PyInstaller.utils.hooks import collect_data_files
 
 a = Analysis(
     ['windows_launcher.py'],
     pathex=[],
     binaries=[],
-    datas=[('assets', 'assets')],
+    datas=[('assets', 'assets'), ('launcher_replace.ps1', '.')] + collect_data_files('certifi'),
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
