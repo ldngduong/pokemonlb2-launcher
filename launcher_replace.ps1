@@ -11,7 +11,11 @@ $started = $null
 try {
     $oldProcess = Get-Process -Id ([int]$env:LEGEND_OTA_PID) -ErrorAction SilentlyContinue
     if ($oldProcess -and !$oldProcess.WaitForExit(60000)) { throw 'Launcher is still running.' }
-    if ((Get-FileHash -LiteralPath $candidate -Algorithm SHA256).Hash -ne $env:LEGEND_OTA_HASH) {
+    $stream = [IO.File]::OpenRead($candidate)
+    $hasher = [Security.Cryptography.SHA256]::Create()
+    try { $hash = [BitConverter]::ToString($hasher.ComputeHash($stream)).Replace('-', '') }
+    finally { $stream.Dispose(); $hasher.Dispose() }
+    if ($hash -ne $env:LEGEND_OTA_HASH) {
         throw 'Downloaded executable no longer matches SHA-256.'
     }
     for ($attempt = 0; $attempt -lt 20; $attempt++) {
